@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(res.user);
     } catch (err) {
       if (err instanceof ApiClientError && err.status === 401) {
-        setUser(null);                 // normal: not logged in
+        setUser(null);
       } else {
         setError(err instanceof Error ? err.message : 'Auth check failed');
         setUser(null);
