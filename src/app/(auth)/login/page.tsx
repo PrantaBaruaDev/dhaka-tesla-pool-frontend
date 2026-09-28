@@ -16,7 +16,6 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If already logged in, skip the login page
   useEffect(() => {
     if (!authLoading && user) {
       router.replace(homeForRole(user.role));
