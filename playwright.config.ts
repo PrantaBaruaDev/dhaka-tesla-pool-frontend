@@ -23,14 +23,16 @@ export default defineConfig({
 
   webServer: [
     {
-      command: 'bun run --cwd backend dev',
-      url: 'http://localhost:3001/health',
+      command: 'bun run dev',
+      cwd: '../backend',
+      url: 'http://localhost:5000/health',
       reuseExistingServer: !process.env.CI,
-      timeout: 60_000,
+      timeout: 120_000,
       env: { NODE_ENV: 'test' },
     },
     {
-      command: 'bun run --cwd frontend dev',
+      command: 'bun run dev --port 3000',
+      cwd: '.',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
