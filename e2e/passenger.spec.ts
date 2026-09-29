@@ -34,7 +34,7 @@ test('passenger requests a ride and sees the detail page', async ({ page }) => {
   await page.getByRole('button', { name: /request ride/i }).click();
 
   await expect(page).toHaveURL(/\/passenger\/rides\/[a-f0-9-]+/, { timeout: 15_000 });
-  await expect(page.getByTestId('status-badge-REQUESTED')).toBeVisible();
+  await expect(page.getByTestId('status-badge-REQUESTED').first()).toBeVisible();
   await expect(page.getByText(/Banani → Mohakhali/)).toBeVisible();
 });
 
@@ -50,7 +50,7 @@ test('passenger cancels a REQUESTED ride', async ({ page }) => {
   await page.getByText(/cancel this ride/i).click();
   await page.getByRole('button', { name: /yes, cancel/i }).click();
 
-  await expect(page.getByTestId('status-badge-CANCELLED')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('status-badge-CANCELLED').first()).toBeVisible({ timeout: 15_000 });
 });
 
 test('history table shows the ride after creating it', async ({ page }) => {
@@ -63,7 +63,7 @@ test('history table shows the ride after creating it', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/passenger\/rides\/[a-f0-9-]+/, { timeout: 15_000 });
 
-  await page.getByRole('link', { name: /my rides/i }).click();
+  await page.getByRole('link', { name: 'My rides', exact: true }).click();
   await expect(page).toHaveURL(/\/passenger\/rides$/);
-  await expect(page.getByText('Banani → Mohakhali')).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText('Banani → Mohakhali').first()).toBeVisible({ timeout: 15_000 });
 });

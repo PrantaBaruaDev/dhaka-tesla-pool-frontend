@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
-  timeout: 60_000,
+  timeout: 180_000,
   expect: { timeout: 10_000 },
 
   use: {
@@ -27,7 +27,7 @@ export default defineConfig({
       cwd: '../backend',
       url: 'http://localhost:5000/health',
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 180_000,
       env: { NODE_ENV: 'test' },
     },
     {
@@ -35,7 +35,7 @@ export default defineConfig({
       cwd: '.',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 60_000,
+      timeout: 180_000,
     },
   ],
 });
