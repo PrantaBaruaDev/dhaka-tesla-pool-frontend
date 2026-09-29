@@ -31,7 +31,7 @@ test('Nusrat and Rafiq share Bullet; both see discounted fares', async ({ browse
   await jashimPage.getByTestId('online-toggle').click();
   await expect(jashimPage.getByTestId('online-toggle')).toContainText(/online/i, { timeout: 15_000 });
 
-  await jashimPage.getByRole('link', { name: /requests/i }).click();
+  await jashimPage.getByRole('link', { name: 'Requests', exact: true }).click();
   await expect(jashimPage.getByText('Nusrat')).toBeVisible({ timeout: 20_000 });
   await jashimPage.getByRole('button', { name: /^accept$/i }).first().click();
 
@@ -46,7 +46,7 @@ test('Nusrat and Rafiq share Bullet; both see discounted fares', async ({ browse
   await createRide(rafiqPage, 'Banani', 'Gulshan 1');
 
   // Jashim accepts Rafiq into the pool 
-  await jashimPage.getByRole('link', { name: /requests/i }).click();
+  await jashimPage.getByRole('link', { name: 'Requests', exact: true }).click();
   await expect(jashimPage.getByText('Rafiq')).toBeVisible({ timeout: 20_000 });
   await expect(
     jashimPage.locator('span').filter({ hasText: /matches your pool/i }).first(),
