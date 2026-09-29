@@ -68,11 +68,11 @@ test('Nusrat and Rafiq share Bullet; both see discounted fares', async ({ browse
 
   // Both passengers see final discounted fares
   await nusratPage.reload();
-  await expect(nusratPage.getByTestId('status-badge-COMPLETED')).toBeVisible({ timeout: 20_000 });
+  await expect(nusratPage.getByTestId('status-badge-COMPLETED').first()).toBeVisible({ timeout: 20_000 });
   await expect(nusratPage.getByText('৳74.40')).toBeVisible();
 
   await rafiqPage.reload();
-  await expect(rafiqPage.getByTestId('status-badge-COMPLETED')).toBeVisible({ timeout: 20_000 });
+  await expect(rafiqPage.getByTestId('status-badge-COMPLETED').first()).toBeVisible({ timeout: 20_000 });
   await expect(rafiqPage.getByText('৳66.00')).toBeVisible();
 
   // Driver history shows the pool
