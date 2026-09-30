@@ -5,6 +5,7 @@ import { api, ApiClientError } from '@/lib/api';
 import { poyshaToTaka, metersToKm, formatTime } from '@/lib/format';
 import { ErrorBox } from './ErrorBox';
 import type { DriverRequestItem } from '@/lib/types';
+import { PassengerNameButton } from './PassengerNameButton';
 
 interface Props {
   item: DriverRequestItem;
@@ -39,7 +40,10 @@ export function DriverRequestRow({ item, onAccepted }: Props) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <p className="font-medium">{item.passenger.name}</p>
+            <PassengerNameButton
+              passengerId={item.passenger.id}
+              passengerName={item.passenger.name}
+            />
             {item.canJoinActivePool && (
               <span className="text-xs border rounded-full px-2 py-0.5 bg-blue-50 text-blue-800 border-blue-200">
                 Matches your pool

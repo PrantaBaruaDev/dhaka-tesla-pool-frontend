@@ -141,3 +141,27 @@ test('fourth passenger is rejected when pool is full', async ({ browser }) => {
   await fourthCtx.close();
   await jashimCtx.close();
 });
+
+test('driver can open a passenger profile', async ({ page }) => {
+  await loginAs(page, 'nusrat');
+  await page.goto('/passenger/rides/new');
+  await page.selectOption('select[name="pickup"]', { label: 'Banani' });
+  await page.selectOption('select[name="destination"]', { label: 'Mohakhali' });
+  await expect(page.getByTestId('estimated-fare')).toContainText('৳93.00', { timeout: 15_000 });
+  await page.getByRole('button', { name: /request ride/i }).click();
+  await expect(page).toHaveURL(/\/passenger\/rides\/[a-f0-9-]+/, { timeout: 15_000 });
+
+  await page.getByRole('button', { name: /logout/i }).click();
+  await loginAs(page, 'jashim');
+  await page.getByTestId('online-toggle').click();
+  await page.getByRole('link', { name: 'Requests', exact: true }).click();
+  await expect(page.getByText('Nusrat')).toBeVisible({ timeout: 20_000 });
+
+  await page.getByTestId('passenger-name-u-nusrat-001').click();
+  await expect(page.getByTestId('passenger-profile-modal')).toBeVisible();
+  await expect(page.getByText('nusrat@example.com')).toBeVisible();
+  await expect(page.getByText('u-nusrat-001')).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('passenger-profile-modal')).not.toBeVisible();
+});

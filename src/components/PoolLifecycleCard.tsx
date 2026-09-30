@@ -5,7 +5,8 @@ import { api, ApiClientError } from '@/lib/api';
 import { poyshaToTaka } from '@/lib/format';
 import { StatusBadge } from './StatusBadge';
 import { ErrorBox } from './ErrorBox';
-import type { ActivePool, RideStatus } from '@/lib/types';
+import type { ActivePool, ActivePoolPassenger, RideStatus } from '@/lib/types';
+import { PassengerNameButton } from './PassengerNameButton';
 
 interface Props {
   pool: ActivePool;
@@ -14,9 +15,11 @@ interface Props {
 
 type Action = 'arrive' | 'start' | 'complete';
 
-function nextActionFor(pool: ActivePool): Action | null {
+
+
+function nextActionFor(pool: ActivePool, passengers: ActivePoolPassenger[]): Action | null {
   if (pool.status === 'OPEN') {
-    const allArrived = pool.passengers.every((p) => p.status === 'DRIVER_ARRIVED');
+    const allArrived = passengers.every((p) => p.status === 'DRIVER_ARRIVED');
     return allArrived ? 'start' : 'arrive';
   }
   if (pool.status === 'IN_PROGRESS') return 'complete';
@@ -32,8 +35,10 @@ const ACTION_LABEL: Record<Action, string> = {
 export function PoolLifecycleCard({ pool, onRefresh }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const activePassengers = pool.passengers.filter((p) => p.status !== 'CANCELLED');
 
-  const action = nextActionFor(pool);
+  const action = nextActionFor(pool, activePassengers );
 
   async function handleAction() {
     if (!action) return;
@@ -70,7 +75,10 @@ export function PoolLifecycleCard({ pool, onRefresh }: Props) {
         {pool.passengers.map((p) => (
           <div key={p.rideRequestId} className="border rounded p-3">
             <div className="flex items-center justify-between">
-              <p className="font-medium">{p.passengerName}</p>
+              <PassengerNameButton
+                passengerId={p.passengerId}
+                passengerName={p.passengerName}
+              />
               <StatusBadge status={p.status as RideStatus} />
             </div>
             <p className="text-sm text-gray-600 mt-1">
