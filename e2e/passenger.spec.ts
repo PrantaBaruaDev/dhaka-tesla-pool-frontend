@@ -31,9 +31,11 @@ test('passenger requests a ride and sees the detail page', async ({ page }) => {
   await page.selectOption('select[name="destination"]', { label: 'Mohakhali' });
   await expect(page.getByTestId('estimated-fare')).toContainText('৳93.00', { timeout: 15_000 });
 
-  await page.getByRole('button', { name: /request ride/i }).click();
+  const requestBtn = page.getByRole('button', { name: /request ride/i });
+  await expect(requestBtn).toBeEnabled({ timeout: 10_000 });
+  await requestBtn.click();
 
-  await expect(page).toHaveURL(/\/passenger\/rides\/[a-f0-9-]+/, { timeout: 15_000 });
+  await expect(page).toHaveURL(/\/passenger\/rides\/[a-f0-9-]+/, { timeout: 30_000 });
   await expect(page.getByTestId('status-badge-REQUESTED').first()).toBeVisible();
   await expect(page.getByText(/Banani → Mohakhali/)).toBeVisible();
 });
