@@ -12,8 +12,18 @@ interface RequireAuthProps {
 }
 
 export function RequireAuth({ role, children }: RequireAuthProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, refresh } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        refresh();
+      }
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
+  }, [refresh]);
 
   useEffect(() => {
     if (loading) return;

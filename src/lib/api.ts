@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export class ApiClientError extends Error {
   constructor(
@@ -13,29 +13,42 @@ export class ApiClientError extends Error {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    ...init,
-    credentials: 'include', 
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);   // 10s cap
 
-  if (res.status === 204) return undefined as T;
+  try {
+    const res = await fetch(`${API_URL}${path}`, {
+      ...init,
+      credentials: 'include',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init.headers ?? {}),
+      },
+    });
 
-  const body = await res.json().catch(() => ({}));
+    if (res.status === 204) return undefined as T;
 
-  if (!res.ok) {
-    throw new ApiClientError(
-      res.status,
-      body.error ?? 'UNKNOWN',
-      body.message ?? `Request failed (${res.status})`,
-      body.details,
-    );
+    const body = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new ApiClientError(
+        res.status,
+        body.error ?? 'UNKNOWN',
+        body.message ?? `Request failed (${res.status})`,
+        body.details,
+      );
+    }
+
+    return body as T;
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new ApiClientError(408, 'TIMEOUT', 'Request timed out.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return body as T;
 }
 
 export const api = {
