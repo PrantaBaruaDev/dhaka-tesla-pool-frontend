@@ -17,6 +17,8 @@ interface PreviewResponse {
     seats: number;
     straightLineMeters: number;
     roadDistanceMeters: number;
+    perSeatFarePoysha: number;
+    subtotalPoysha: number;
     estimatedFarePoysha: number;
   };
 }
@@ -205,20 +207,33 @@ function NewRideContent() {
                   {previewLoading ? '…' : preview ? metersToKm(preview.roadDistanceMeters) : '—'}
                 </span>
               </div>
-              <div className="flex justify-between text-sm mt-1">
-                <span className="text-gray-600">Estimated fare</span>
-                <span data-testid="estimated-fare" className="font-bold">
+
+              {preview && preview.seats > 1 && (
+                <>
+                  <div className="flex justify-between text-sm mt-1">
+                    <span className="text-gray-600">Per seat</span>
+                    <span>{poyshaToTaka(preview.perSeatFarePoysha)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-1">
+                    <span className="text-gray-600">Seats</span>
+                    <span>{preview.seats}</span>
+                  </div>
+                </>
+              )}
+
+              <div className="flex justify-between text-sm mt-2 pt-2 border-t">
+                <span className="text-gray-700 font-medium">Total estimate</span>
+                <span data-testid="estimated-fare" className="font-bold text-base">
                   {previewLoading ? '…' : preview ? poyshaToTaka(preview.estimatedFarePoysha) : '—'}
                 </span>
               </div>
+
               {preview && (
                 <p className="text-xs text-gray-500 mt-2">
-                  Pool discount applied at completion if you share the Tesla.
+                  Pool discount applied at completion if you share the Tesla with another passenger.
                 </p>
               )}
-              {previewError && (
-                <p className="text-xs text-red-600 mt-2">{previewError}</p>
-              )}
+              {previewError && <p className="text-xs text-red-600 mt-2">{previewError}</p>}
             </div>
 
             {submitError && <ErrorBox message={submitError} />}

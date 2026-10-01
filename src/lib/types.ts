@@ -53,11 +53,16 @@ export interface ActivePoolPassenger {
   rideRequestId: string;
   passengerId: string;
   passengerName: string;
+  passengerEmail?: string;
   seats: number;
   status: RideStatus;
   pickupZone: { id: string; name: string; cluster: string };
   destinationZone: { id: string; name: string; cluster: string };
-  estimatedFarePoysha: number;
+  estimatedFarePoysha: number;      // original (no discount)
+  perSeatFarePoysha: number;        // per-seat base fare
+  subtotalPoysha: number;           // per-seat × seats
+  discountPoysha: number;           // 20% of subtotal if pooled
+  projectedFarePoysha: number;      // subtotal − discount
 }
 
 export interface ActivePool {
@@ -66,6 +71,9 @@ export interface ActivePool {
   seatsOccupied: number;
   capacity: number;
   version: number;
+  isPooled: boolean;
+  discountPercent: number;
+  projectedTotalPoysha: number;
   startedAt: string | null;
   completedAt: string | null;
   passengers: ActivePoolPassenger[];
